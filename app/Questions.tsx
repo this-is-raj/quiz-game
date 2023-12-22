@@ -50,7 +50,7 @@ const Questions = ({ questions }: Props) => {
   }, []);
 
   return (
-    <div className="container w-full max-w-[768px]">
+    <div className="container w-full max-w-[768px] mb-10">
       <form onSubmit={handleSubmit} method="post">
         {questions.map((question, i) => (
           <div key={question.question} className="mb-5">
