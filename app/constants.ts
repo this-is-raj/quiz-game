@@ -20,6 +20,7 @@ export const questions: Question[] = [
     question: "Who can fly amongs the following?",
     options: ["Cow", "Crow", "Dob", "Sparrow"],
     correctAns: ["Crow", "Sparrow"],
+    type: "multiple",
   },
   {
     question: "What is the capital of India?",

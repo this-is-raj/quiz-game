@@ -6,6 +6,14 @@ type Props = {
   questions: Question[];
 };
 
+const getColor = (quesiton: Question, value: string) => {
+  let res;
+  if (quesiton.type == "multiple") res = quesiton.correctAns.includes(value);
+  else res = quesiton.correctAns == value;
+
+  return res ? "text-custom-green" : "text-custom-red";
+};
+
 const Questions = ({ questions }: Props) => {
   const [response, setResponse] = useState<{
     [key: string]: string | string[];
@@ -19,7 +27,7 @@ const Questions = ({ questions }: Props) => {
       new FormData(e.target as HTMLFormElement).entries()
     );
     const values: { [key: string]: string | string[] } = {};
-    debugger;
+
     formData.forEach(([key, val]) => {
       if (!values[key]) {
         values[key] = val as string;
@@ -35,9 +43,9 @@ const Questions = ({ questions }: Props) => {
       if (!val?.length) return false;
 
       if (q.type === "multiple") {
-        if (Array.isArray(val)) values[key] = [values[key] as string];
+        if (!Array.isArray(val)) values[key] = [val as string];
         return (
-          (val as string[]).sort().join(",") ==
+          (values[key] as string[]).sort().join(",") ==
           (q.correctAns as string[]).sort().join(",")
         );
       }
@@ -55,19 +63,22 @@ const Questions = ({ questions }: Props) => {
         {questions.map((question, i) => (
           <div key={question.question} className="mb-5">
             <p
-              className={`font-bold border-black p-[5px_15px] rounded-md text-white mb-5 ${
+              className={`font-bold border-black p-[5px_15px] rounded-md mb-5 ${
                 isSubmitted
                   ? isCorrect[i]
-                    ? "bg-[#35e478]"
-                    : "bg-[#d63e23]"
-                  : "bg-[#607D8B]"
+                    ? "bg-custom-green"
+                    : "bg-custom-red"
+                  : "bg-gray-800"
               }`}
             >
               {i + 1}. {question.question}
             </p>
             <div className="flex flex-col pl-4">
               {question.options.map((opt) => (
-                <label key={opt}>
+                <label
+                  key={opt}
+                  className={isSubmitted ? getColor(question, opt) : ""}
+                >
                   <input
                     name={`quesiton-${i}`}
                     type={question.type === "multiple" ? "checkbox" : "radio"}
