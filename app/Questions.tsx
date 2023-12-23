@@ -21,41 +21,44 @@ const Questions = ({ questions }: Props) => {
   const [isCorrect, setIsCorrect] = useState<boolean[]>([]);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = Array.from(
-      new FormData(e.target as HTMLFormElement).entries()
-    );
-    const values: { [key: string]: string | string[] } = {};
+  const handleSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const formData = Array.from(
+        new FormData(e.target as HTMLFormElement).entries()
+      );
+      const values: { [key: string]: string | string[] } = {};
 
-    formData.forEach(([key, val]) => {
-      if (!values[key]) {
-        values[key] = val as string;
-        return;
-      }
-      if (!Array.isArray(values[key])) values[key] = [values[key] as string];
-      (values[key] as string[]).push(val as string);
-    });
+      formData.forEach(([key, val]) => {
+        if (!values[key]) {
+          values[key] = val as string;
+          return;
+        }
+        if (!Array.isArray(values[key])) values[key] = [values[key] as string];
+        (values[key] as string[]).push(val as string);
+      });
 
-    const isCorrectAns = questions.map((q, i) => {
-      const key = `quesiton-${i}`;
-      let val = values[key];
-      if (!val?.length) return false;
+      const isCorrectAns = questions.map((q, i) => {
+        const key = `quesiton-${i}`;
+        let val = values[key];
+        if (!val?.length) return false;
 
-      if (q.type === "multiple") {
-        if (!Array.isArray(val)) values[key] = [val as string];
-        return (
-          (values[key] as string[]).sort().join(",") ==
-          (q.correctAns as string[]).sort().join(",")
-        );
-      }
-      return val == q.correctAns;
-    });
+        if (q.type === "multiple") {
+          if (!Array.isArray(val)) values[key] = [val as string];
+          return (
+            (values[key] as string[]).sort().join(",") ==
+            (q.correctAns as string[]).sort().join(",")
+          );
+        }
+        return val == q.correctAns;
+      });
 
-    setResponse(values);
-    setIsCorrect(isCorrectAns);
-    setIsSubmitted(true);
-  }, []);
+      setResponse(values);
+      setIsCorrect(isCorrectAns);
+      setIsSubmitted(true);
+    },
+    [questions]
+  );
 
   return (
     <div className="container w-full max-w-[768px] mb-10">
